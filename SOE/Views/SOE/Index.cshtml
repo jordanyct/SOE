@@ -1,0 +1,178 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+@model SOE.Models.SOEResponseModel
+<h2>SOE</h2>
+@using (Html.BeginForm("Index", "SOE", FormMethod.Post))
+
+{
+    <div class="form-group">
+        <label for="inpURL">URL</label>
+        <input type="text" class="form-control" id="txtURL" name="txtURL" placeholder="Enter URL">
+    </div>
+    <div class="form-group">
+        <label for="exampleFormControlTextarea1">Text Area</label>
+        <textarea class="form-control" id="txtArea" name="txtArea" rows="3"></textarea>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="StopwordCheck" name="SOEOption" value="StopwordCheck">
+        <label class="form-check-label" for="StopwordCheck">Remove Stop-Words</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="OccurrenceCheck" name="SOEOption" value="OccurrenceCheck">
+        <label class="form-check-label" for="exampleCheck1">Word Occurrence</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="MetaCheck" name="SOEOption" value="MetaCheck">
+        <label class="form-check-label" for="exampleCheck1">Meta Keyword Occurrence</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="URLCheck" name="SOEOption" value="URLCheck">
+        <label class="form-check-label" for="exampleCheck1">External URL</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+}
+<p></p>
+<p></p>
+<div id="accordion">
+    @if (Model != null)
+    {
+        if (Model.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-danger" role="alert">
+                @Model.ErrorMessage
+            </div>
+        }
+
+        if (Model.OutputText != null)
+        {
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link btn-primary collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Remove Stop-words Result
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <textarea class="form-control" id="txtArea" name="txtOutputText" rows="3">@Model.OutputText</textarea>
+                    </div>
+                </div>
+            </div>
+
+        }
+        if (Model.ExternaLinkCount != null)
+        {
+            <div class="alert alert-success" role="alert">
+                Total Number of External Link detected is @Model.ExternaLinkCount
+            </div>
+        }
+
+        if (Model.MetaTagOccurrences != null && Model.MetaTagOccurrences.Any())
+        {
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link btn-primary collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Meta Keyword Occurrence Result
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                    <div class="card-body">
+                        <table id="dtMetaTagOccurrences" class="table table-striped table-bordered table-sm" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="th-sm">
+                                        Meta Keyword
+                                    </th>
+                                    <th class="th-sm">
+                                        Occurrences
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var keyValue in Model.MetaTagOccurrences.Keys)
+                                {
+                                    <tr>
+                                        <td>@keyValue</td>
+                                        <td>@Model.MetaTagOccurrences[keyValue]</td>
+
+                                    </tr>}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#dtMetaTagOccurrences').DataTable();
+                    $('.dataTables_length').addClass('bs-select');
+                });</script>
+        }
+        @*else
+            {
+                <div class="alert alert-primary" role="alert">
+                    No Meta Keyword Detected.<br />
+                    Example Meta Keyword<br />
+                      <b>&#60;meta name="keywords" content="HTML,CSS,XML,JavaScript"&#62;</b>
+                </div>
+            }*@
+
+        if (Model.CountOccurrence != null && Model.CountOccurrence.Any())
+        {
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link btn-primary collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Word Occurrence Result
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                    <div class="card-body">
+                        <table id="dtCountOccurrence" class="table table-striped table-bordered table-sm" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="th-sm">
+                                        Word
+                                    </th>
+                                    <th class="th-sm">
+                                        Occurrences
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var keyValue in Model.CountOccurrence.Keys)
+                                {
+                                    <tr>
+                                        <td>@keyValue</td>
+                                        <td>@Model.CountOccurrence[keyValue]</td>
+
+                                    </tr>}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#dtCountOccurrence').DataTable();
+                    $('.dataTables_length').addClass('bs-select');
+                });</script>
+        }
+
+    }
+</div>
